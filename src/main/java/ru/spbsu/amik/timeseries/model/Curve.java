@@ -1,4 +1,4 @@
-package model.series;
+package ru.spbsu.amik.timeseries.model;
 
 import java.util.List;
 
