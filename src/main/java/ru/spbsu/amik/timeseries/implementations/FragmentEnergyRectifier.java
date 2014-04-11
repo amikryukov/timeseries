@@ -23,6 +23,11 @@ public class FragmentEnergyRectifier implements Rectifier {
         return fragmentSize;
     }
 
+    public void setFragmentSize(int fragmentSize) {
+        this.fragmentSize = fragmentSize;
+        this.multiplier = 1d / (2 * fragmentSize + 1d);
+    }
+
     @Override
     public double rectify(List<Point> survey) {
 

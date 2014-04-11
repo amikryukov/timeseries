@@ -24,7 +24,7 @@ public class TimeSeriesGenerator {
         for (int i = 0; i < count; i++) {
             double value = random.nextDouble();
             if (value < 0.05)
-                value += 5 * random.nextDouble();
+                value += 10 * random.nextDouble();
             Point point = new Point(startTime + i * step, value);
             curve.addPoint(point);
         }
