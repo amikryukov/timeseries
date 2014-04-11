@@ -10,12 +10,17 @@ import java.util.List;
  */
 public class FragmentEnergyRectifier implements Rectifier {
 
-    private long stepLength;
-    private long surveyLength;
+    // tell how many points fet for local fragment;
+    private int fragmentSize;
+    double multiplier;
 
-    public FragmentEnergyRectifier(long stepLength, long surveyLength) {
-        this.stepLength = stepLength;
-        this.surveyLength = surveyLength;
+    public FragmentEnergyRectifier(int fragmentSize) {
+        this.fragmentSize = fragmentSize;
+        this.multiplier = 1d / (2 * fragmentSize + 1d);
+    }
+
+    public int getFragmentSize() {
+        return fragmentSize;
     }
 
     @Override
@@ -37,6 +42,6 @@ public class FragmentEnergyRectifier implements Rectifier {
             sum += point.getValue();
         }
 
-        return stepLength / (stepLength + 2 * surveyLength) * sum;
+        return multiplier * sum;
     }
 }

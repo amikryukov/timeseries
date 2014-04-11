@@ -9,12 +9,14 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
-public class FragmentLengthRectifierTest {
-    FragmentLengthRectifier fragmentRectifier;
+public class FragmentEnergyRectifierTest {
+
+    private FragmentEnergyRectifier fragmentRectifier;
+    private final double EPSILON = 0.000001;
 
     @Before
     public void setUp() {
-        fragmentRectifier = new FragmentLengthRectifier();
+        fragmentRectifier = new FragmentEnergyRectifier(3);
     }
 
     @Test
@@ -28,20 +30,7 @@ public class FragmentLengthRectifierTest {
 
         double rectification = fragmentRectifier.rectify(survey);
 
-        assertEquals("", 2d, rectification);
-    }
-
-    @Test
-    // one value
-    public void oneValueRectifyTest() {
-
-        List<Point> survey = new ArrayList<Point>(1);
-        double value = 123;
-        survey.add(new Point(0, value));
-
-        double rectification = fragmentRectifier.rectify(survey);
-
-        assertEquals("should return the same value", value, rectification);
+        assertEquals("", 146d / 49d, rectification, EPSILON);
     }
 
     @Test
@@ -52,5 +41,4 @@ public class FragmentLengthRectifierTest {
 
         assertEquals("should return 0", value, fragmentRectifier.rectify(survey));
     }
-
 }
