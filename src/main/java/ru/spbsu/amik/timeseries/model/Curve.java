@@ -1,5 +1,6 @@
 package ru.spbsu.amik.timeseries.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Curve {
@@ -16,6 +17,15 @@ public class Curve {
         this.title = title;
         this.color = color;
         this.points = points;
+    }
+
+    public Curve(String title, int color) {
+        this.title = title;
+        this.color = color;
+    }
+
+    public Curve(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
@@ -40,5 +50,12 @@ public class Curve {
 
     public void setPoints(List<Point> points) {
         this.points = points;
+    }
+
+    public void addPoint(Point point) {
+        if (points == null) {
+            points = new ArrayList<Point>();
+        }
+        points.add(point);
     }
 }
