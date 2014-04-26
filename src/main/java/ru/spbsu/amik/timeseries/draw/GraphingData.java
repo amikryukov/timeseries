@@ -48,6 +48,10 @@ public class GraphingData {
         for (Anomaly anomaly : dad.detectAnomalies(curve3)) {
             System.out.println(anomaly.toString());
         }
+        System.out.println("------------------");
+        for (Anomaly anomaly : dad.detectAnomaliesCalculatingVL(curve3)) {
+            System.out.println(anomaly.toString());
+        }
 
         translateToJFree(curve);
 

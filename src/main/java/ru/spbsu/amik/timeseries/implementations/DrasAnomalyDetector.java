@@ -36,6 +36,33 @@ public class DrasAnomalyDetector implements AnomalyDetector {
     @Override
     public List<Anomaly> detectAnomalies(Curve rectification) {
 
+        return detectAnomalies(rectification, verticalBackgroundLevel);
+    }
+
+    public List<Anomaly> detectAnomaliesCalculatingVL(Curve rectification) {
+
+        double verticalLevel = 0;
+        // используя гравитационное расширение нечетких сравнений найдем центр тяжести всей совокупности.
+        double sumOfRectifications = 0;
+        for (Point point : rectification.getPoints()) {
+            sumOfRectifications += point.getValue();
+        }
+        double mediana = sumOfRectifications / rectification.getPoints().size();
+
+        System.out.println("mediana : " + mediana);
+        // сравнивая медиану с искомым вертикальным уровнем, должны получить, что уровень сильно больше ,
+        // тоесть n ( mediana. verticalLevel) = 0.5
+        // возьмем простое сравнение n(a, b) = (b - a) / (a^2 + b^2)^0.5
+        // есть решение на бумажке
+        verticalLevel = mediana * (8 + Math.sqrt(28)) / 6;
+        System.out.println("vertical level : " + verticalLevel);
+
+        return detectAnomalies(rectification, verticalLevel);
+    }
+
+
+    private List<Anomaly> detectAnomalies(Curve rectification, double verticalBackgroundLevel) {
+
         List<Anomaly> anomalies = new ArrayList<Anomaly>();
         List<Point> points = rectification.getPoints();
 
