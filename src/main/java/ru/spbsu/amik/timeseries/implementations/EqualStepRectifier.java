@@ -1,5 +1,7 @@
-package ru.spbsu.amik.timeseries.api;
+package ru.spbsu.amik.timeseries.implementations;
 
+import ru.spbsu.amik.timeseries.api.GlobalRectifier;
+import ru.spbsu.amik.timeseries.api.Rectifier;
 import ru.spbsu.amik.timeseries.model.Curve;
 import ru.spbsu.amik.timeseries.model.Point;
 
@@ -12,6 +14,11 @@ import java.util.List;
 public class EqualStepRectifier implements GlobalRectifier {
 
     private Rectifier localRectifier;
+
+    /**
+     * Actually it can be not a parameter but calculated value from equation :
+     * n(dT, l) = 1/2 , where l = localOverviewCount, dT = set of all not trivial distances on time series.
+     * But it would be added in future releases */
     private int localOverviewCount;
 
     public void setLocalRectifier(Rectifier localRectifier) {

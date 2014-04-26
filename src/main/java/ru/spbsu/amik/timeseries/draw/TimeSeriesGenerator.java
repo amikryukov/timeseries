@@ -23,8 +23,8 @@ public class TimeSeriesGenerator {
 
         for (int i = 0; i < count; ) {
             double value = random.nextDouble();
-            if (value < 0.05) {
-                if (value < 0.02) {
+            if (value < 0.02) {
+                if (value < 0.01) {
 
                     for (int k = 0; k < 5; k++) {
                         double vv = value;

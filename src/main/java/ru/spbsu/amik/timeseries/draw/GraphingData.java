@@ -7,13 +7,16 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import ru.spbsu.amik.timeseries.api.EqualStepRectifier;
+import ru.spbsu.amik.timeseries.implementations.DrasAnomalyDetector;
+import ru.spbsu.amik.timeseries.implementations.EqualStepRectifier;
 import ru.spbsu.amik.timeseries.implementations.FragmentEnergyRectifier;
 import ru.spbsu.amik.timeseries.implementations.FragmentLengthRectifier;
+import ru.spbsu.amik.timeseries.model.Anomaly;
 import ru.spbsu.amik.timeseries.model.Curve;
 import ru.spbsu.amik.timeseries.model.Point;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javax.swing.*;
 
 public class GraphingData {
@@ -23,7 +26,7 @@ public class GraphingData {
 
         Curve curve = new TimeSeriesGenerator(99).generateRandomEqualStepSeries(
                 "Title",
-                200, // count
+                1000, // count
                 100, // step
                 0,   // start time
                 555  // color
@@ -32,13 +35,19 @@ public class GraphingData {
         EqualStepRectifier esr = new EqualStepRectifier();
         esr.setLocalRectifier(new FragmentLengthRectifier());
         esr.setLocalOverviewCount(2);
-        Curve curve1 = esr.rectify(curve);
         esr.setLocalOverviewCount(5);
-        Curve curve2 = esr.rectify(curve);
 
         esr.setLocalRectifier(new FragmentEnergyRectifier(3));
-        esr.setLocalOverviewCount(1);
+        esr.setLocalOverviewCount(3);
         Curve curve3 = esr.rectify(curve);
+
+        DrasAnomalyDetector dad = new DrasAnomalyDetector();
+        dad.setGlobalOverviewCount(15);
+        dad.setHorizontalBackgroundLevel(0.9);
+        dad.setVerticalBackgroundLevel(25d);
+        for (Anomaly anomaly : dad.detectAnomalies(curve3)) {
+            System.out.println(anomaly.toString());
+        }
 
         translateToJFree(curve);
 
@@ -47,8 +56,6 @@ public class GraphingData {
 
         JPanel p = new JPanel();
         p.add(translateToJFree(curve));
-        p.add(translateToJFree(curve1));
-        p.add(translateToJFree(curve2));
         p.add(translateToJFree(curve3));
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 
