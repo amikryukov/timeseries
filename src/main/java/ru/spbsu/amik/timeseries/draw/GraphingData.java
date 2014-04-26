@@ -31,13 +31,13 @@ public class GraphingData {
 
         EqualStepRectifier esr = new EqualStepRectifier();
         esr.setLocalRectifier(new FragmentLengthRectifier());
-        esr.setPosition(2);
+        esr.setLocalOverviewCount(2);
         Curve curve1 = esr.rectify(curve);
-        esr.setPosition(5);
+        esr.setLocalOverviewCount(5);
         Curve curve2 = esr.rectify(curve);
 
         esr.setLocalRectifier(new FragmentEnergyRectifier(3));
-        esr.setPosition(1);
+        esr.setLocalOverviewCount(1);
         Curve curve3 = esr.rectify(curve);
 
         translateToJFree(curve);

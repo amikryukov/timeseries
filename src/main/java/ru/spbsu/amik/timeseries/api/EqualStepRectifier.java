@@ -12,14 +12,14 @@ import java.util.List;
 public class EqualStepRectifier implements GlobalRectifier {
 
     private Rectifier localRectifier;
-    private int position;
+    private int localOverviewCount;
 
     public void setLocalRectifier(Rectifier localRectifier) {
         this.localRectifier = localRectifier;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setLocalOverviewCount(int localOverviewCount) {
+        this.localOverviewCount = localOverviewCount;
     }
 
     @Override
@@ -27,15 +27,15 @@ public class EqualStepRectifier implements GlobalRectifier {
 
         Curve result = new Curve(curve.getTitle(), curve.getColor());
         int count = curve.getPoints().size();
-        if (count < 2 * position + 1) {
+        if (count < 2 * localOverviewCount + 1) {
             throw new IllegalArgumentException("not enough points " + count + " for rectifying with " + this.toString());
         }
 
-        List<Point> fragment = new ArrayList<Point>(position * 2 + 1);
+        List<Point> fragment = new ArrayList<Point>(localOverviewCount * 2 + 1);
 
-        for (int i = position; i < count - position; i ++) {
-            for (int j = 0; j < 2 * position + 1; j ++) {
-                fragment.add(j, curve.getPoints().get(i - position + j));
+        for (int i = localOverviewCount; i < count - localOverviewCount; i ++) {
+            for (int j = 0; j < 2 * localOverviewCount + 1; j ++) {
+                fragment.add(j, curve.getPoints().get(i - localOverviewCount + j));
             }
             long currentTime = curve.getPoints().get(i).getTime();
             result.addPoint(new Point(currentTime, localRectifier.rectify(fragment)));
@@ -49,7 +49,7 @@ public class EqualStepRectifier implements GlobalRectifier {
     public String toString() {
         return "EqualStepRectifier{" +
                 "localRectifier=" + localRectifier +
-                ", position=" + position +
+                ", localOverviewCount=" + localOverviewCount +
                 '}';
     }
 }

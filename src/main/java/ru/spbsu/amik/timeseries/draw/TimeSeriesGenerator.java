@@ -21,11 +21,21 @@ public class TimeSeriesGenerator {
     public Curve generateRandomEqualStepSeries (String title, int count, long step, long startTime, int color) {
         Curve curve = new Curve(title, color);
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ) {
             double value = random.nextDouble();
-            if (value < 0.05)
+            if (value < 0.05) {
+                if (value < 0.02) {
+
+                    for (int k = 0; k < 5; k++) {
+                        double vv = value;
+                        vv += 10 * random.nextDouble();
+                        Point point = new Point(startTime + (i++) * step, vv);
+                        curve.addPoint(point);
+                    }
+                }
                 value += 10 * random.nextDouble();
-            Point point = new Point(startTime + i * step, value);
+            }
+            Point point = new Point(startTime + (i++) * step, value);
             curve.addPoint(point);
         }
         return curve;
