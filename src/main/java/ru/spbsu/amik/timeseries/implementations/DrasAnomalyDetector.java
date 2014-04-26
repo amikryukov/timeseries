@@ -6,6 +6,7 @@ import ru.spbsu.amik.timeseries.model.Curve;
 import ru.spbsu.amik.timeseries.model.Point;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -68,9 +69,12 @@ public class DrasAnomalyDetector implements AnomalyDetector {
 
         Point startAnomaly = null;
         Point endAnomaly = null;
+        // value - is difference of left and right measures
+        Curve potentialAnomalies = new Curve();
         for (int i = 0 ; i < points.size(); i ++) {
             double leftMeasure = leftSideMeasure(verticalBackgroundLevel, globalOverviewCount, i, points);
             double rightMeasure = rightSideMeasure(verticalBackgroundLevel, globalOverviewCount, i, points);
+            double curDifference = leftMeasure - rightMeasure;
 
             // potentially anomaly
             if (Math.min(leftMeasure, rightMeasure) < horizontalBackgroundLevel) {
@@ -78,14 +82,52 @@ public class DrasAnomalyDetector implements AnomalyDetector {
                     startAnomaly = points.get(i);
                 }
                 endAnomaly = points.get(i);
+                potentialAnomalies.addPoint(new Point(endAnomaly.getTime(), curDifference));
             } else {
-                if (startAnomaly != null)
+                if (startAnomaly != null) {
                     anomalies.add(new Anomaly(startAnomaly.getTime(), endAnomaly.getTime(), Anomaly.AnomalyLevel.POTENTIAL));
-                startAnomaly = null;
+                    anomalies.addAll(findAnomaliesInPotentialSet(potentialAnomalies));
+                    startAnomaly = null;
+                    potentialAnomalies.getPoints().clear();
+                }
             }
         }
 
         return anomalies;
+    }
+
+    private Collection<? extends Anomaly> findAnomaliesInPotentialSet(Curve potentialAnomalies) {
+        List<Anomaly> resultList = new ArrayList<Anomaly>();
+        double difference = Double.MAX_VALUE;
+        long startTime = 0;
+        long endTime = 0;
+        List<Point> points = potentialAnomalies.getPoints();
+        int pointsCount = points.size();
+        for (int i = 0; i < pointsCount; i++) {
+            double currentDiff = points.get(i).getValue();
+
+            while (currentDiff < 0 && i < pointsCount - 1) {
+                if (currentDiff < difference) {
+                    difference = currentDiff;
+                    startTime = points.get(i).getTime();
+                }
+                currentDiff = points.get(++i).getValue();
+            }
+
+            while (currentDiff >= 0 && i < pointsCount - 1) {
+                if (currentDiff > difference) {
+                    difference = currentDiff;
+                    endTime = points.get(i).getTime();
+                }
+                currentDiff = points.get(++i).getValue();
+            }
+
+            if (startTime != 0 && endTime != 0) {
+                resultList.add(new Anomaly(startTime, endTime, Anomaly.AnomalyLevel.ANOMALY));
+                startTime = 0; endTime = 0;
+            }
+        }
+        return resultList;
     }
 
 
@@ -129,5 +171,11 @@ public class DrasAnomalyDetector implements AnomalyDetector {
 
         return globalOverviewCount + 1 - Math.abs(point - currentPoint)
                       / (globalOverviewCount + 1);
+    }
+
+
+    /** additional class to find anomalies on potential anomalies set */
+    private class DifferenceAnomalyDetector {
+
     }
 }
